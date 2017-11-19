@@ -1,10 +1,9 @@
-import xs, { Stream } from 'xstream';
-import throttle from 'xstream/extra/throttle';
-import { position$ } from './position';
-import { absoluteOrientation$ } from './deviceorientation';
 import bearing from '@turf/bearing';
-import distance from '@turf/distance';
 import { Either, unpack } from '@typed/either';
+import xs, { Stream } from 'xstream';
+
+import { absoluteOrientation$ } from './deviceorientation';
+import { position$ } from './position';
 
 export type LatLng = [number, number];
 

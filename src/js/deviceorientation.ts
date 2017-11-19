@@ -1,5 +1,5 @@
-import xs, { Stream, Listener, Producer } from 'xstream';
 import { Either } from '@typed/either';
+import xs, { Producer, Stream } from 'xstream';
 
 const orientationProducer: Producer<DeviceOrientationEvent> = {
   start: function(listener) {

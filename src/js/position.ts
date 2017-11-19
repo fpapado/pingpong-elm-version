@@ -1,4 +1,4 @@
-import xs, { Listener, Producer } from 'xstream';
+import xs, { Producer } from 'xstream';
 
 interface PositionProducer extends Producer<Position> {
   watchId: number;
