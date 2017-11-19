@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "strictFunctionTypes": false,
+    "noImplicitAny": false,
+    "target": "es5",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "allowJs": true,
+    "lib": ["dom", "es2017"]
+  }
+}
