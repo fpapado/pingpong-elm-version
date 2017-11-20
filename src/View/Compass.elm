@@ -22,18 +22,20 @@ view { direction } =
         -- TODO: normalise angle
         -- (dir <= 360 && dir >= 350);
     in
-        div [ class "compass" ]
-            [ Html.Keyed.node "div" [ classList [ ( "compass__windrose animatecolor", True ), ( "compass__windrose--aligned", isAligned ) ], style [ rotationStyle ] ] viewCompassMarks
-            , div [ class "compass__arrow-container" ]
-                [ div [ classList [ ( "compass__arrow animatecolor", True ), ( "compass__arrow--aligned", isAligned ) ] ]
-                    [ div [ class "compass__labels" ]
-                        [ span []
-                            [ viewIf isAligned (text "Hello!") ]
-                        , span []
-                            [ text <| toString direction
-                            , sup
-                                []
-                                [ text "o" ]
+        div [ class "overflow-hidden" ]
+            [ div [ class "compass" ]
+                [ Html.Keyed.node "div" [ classList [ ( "compass__windrose animatecolor", True ), ( "compass__windrose--aligned", isAligned ) ], style [ rotationStyle ] ] viewCompassMarks
+                , div [ class "compass__arrow-container" ]
+                    [ div [ classList [ ( "compass__arrow animatecolor", True ), ( "compass__arrow--aligned", isAligned ) ] ]
+                        [ div [ class "compass__labels" ]
+                            [ span []
+                                [ viewIf isAligned (text "Hello!") ]
+                            , span []
+                                [ text <| toString <| roundTo 2 direction
+                                , sup
+                                    []
+                                    [ text "o" ]
+                                ]
                             ]
                         ]
                     ]
@@ -53,3 +55,12 @@ viewIf condition item =
         item
     else
         text ""
+
+
+roundTo : Int -> Float -> Float
+roundTo places =
+    let
+        factor =
+            toFloat (10 ^ places)
+    in
+        (*) factor >> round >> toFloat >> (\n -> n / factor)

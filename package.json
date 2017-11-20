@@ -9,7 +9,9 @@
     "make": "elm-make",
     "repl": "elm-repl",
     "reactor": "elm-reactor",
-    "test": "elm-test"
+    "test": "elm-test",
+    "deploy": "cd build && now -A ../now.json && now alias -A ../now.json",
+    "release": "npm run build && npm run deploy"
   },
   "devDependencies": {
     "@types/node": "^8.0.53",

@@ -18,7 +18,7 @@ const targetPosition$: MemoryStream<[number, number]> = xs
     stop: function() {}
   } as Producer<[number, number]>)
   .debug()
-  .startWith([0, 90]);
+  .startWith([41.1496, -8.6109]);
 
 // Listen to the aim stream, and send the values to Elm
 makeCustomAim$(targetPosition$)
@@ -30,7 +30,7 @@ makeCustomAim$(targetPosition$)
   });
 
 // Debug stream
-xs.periodic(16).debug().addListener({next: aim => app.ports.customAimIn.send(aim)});
+// xs.periodic(16).debug().addListener({next: aim => app.ports.customAimIn.send(aim)});
 
 const sendAimOrError = aimResult => {
   unpack(

@@ -1,4 +1,6 @@
 {
     "editor.formatOnSave": true,
-    "typescript.tsdk": "node_modules/typescript/lib"
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "elm.formatOnSave": true,
+    "elm.formatCommand": "./node_modules/.bin/elm-format"
 }
