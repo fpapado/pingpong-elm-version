@@ -1,19 +1,50 @@
 module Main exposing (..)
 
-import Html exposing (Html, text, div, h1, img)
-import Html.Attributes exposing (src)
+import Ports
+import View.Compass as Compass
+import Html exposing (Html, text, div, h1, img, button, text)
+import Html.Events exposing (onClick)
+import EveryDict exposing (EveryDict)
 
 
 ---- MODEL ----
 
 
+type alias LatLng =
+    ( Float, Float )
+
+
+type TargetId
+    = TargetId String
+
+
 type alias Model =
-    {}
+    { pickedTarget : Maybe TargetId
+    , targetPositions : EveryDict TargetId LatLng
+    , aim : Float
+    }
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( {}, Cmd.none )
+    ( initModel, Cmd.none )
+
+
+initModel : Model
+initModel =
+    { pickedTarget = Nothing
+    , targetPositions = initTargets
+    , aim = 0
+    }
+
+
+initTargets : EveryDict TargetId LatLng
+initTargets =
+    EveryDict.fromList
+        ([ ( (TargetId "Helsinki"), ( 60.192, 24.9458 ) )
+         , ( (TargetId "Porto"), ( 41.1496, -8.6109 ) )
+         ]
+        )
 
 
 
@@ -21,12 +52,23 @@ init =
 
 
 type Msg
-    = NoOp
+    = PickTargetPosition TargetId
+    | NewAim Float
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    ( model, Cmd.none )
+    case msg of
+        PickTargetPosition newTargetId ->
+            let
+                getTarget targetId =
+                    EveryDict.get targetId model.targetPositions
+                        |> Maybe.withDefault ( 0, 0 )
+            in
+                { model | pickedTarget = Just newTargetId } ! [ Ports.targetPositionOut (getTarget newTargetId) ]
+
+        NewAim newAim ->
+            { model | aim = newAim } ! []
 
 
 
@@ -35,9 +77,36 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    div []
-        [ img [ src "/logo.svg" ] []
-        , h1 [] [ text "Your Elm App is working!" ]
+    div [] <|
+        [ Compass.view { direction = model.aim } ]
+            ++ (List.map
+                    (\( targetId, position ) -> viewPositionButton targetId)
+                    (EveryDict.toList model.targetPositions)
+               )
+
+
+viewPositionButton : TargetId -> Html Msg
+viewPositionButton targetId =
+    let
+        targetIdToString (TargetId idString) =
+            idString
+    in
+        div
+            []
+            [ button [ onClick (PickTargetPosition targetId) ]
+                [ text <| targetIdToString targetId
+                ]
+            ]
+
+
+
+---- SUBS ----
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.batch
+        [ Ports.customAimIn NewAim
         ]
 
 
@@ -51,5 +120,5 @@ main =
         { view = view
         , init = init
         , update = update
-        , subscriptions = always Sub.none
+        , subscriptions = subscriptions
         }

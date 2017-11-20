@@ -145,7 +145,7 @@ module.exports = {
       },
 
       {
-        test: /\.css$/,
+        test: /\.(scss|css)$/,
         use: ExtractTextPlugin.extract(
           Object.assign(
             {
@@ -167,6 +167,9 @@ module.exports = {
                       })
                     ]
                   }
+                },
+                {
+                  loader: require.resolve('sass-loader')
                 }
               ]
             },
@@ -176,7 +179,7 @@ module.exports = {
       },
 
       {
-        exclude: [/\.html$/, /\.js$/, /\.ts$/, /\.elm$/, /\.css$/, /\.json$/, /\.svg$/],
+        exclude: [/\.html$/, /\.js$/, /\.ts$/, /\.elm$/, /\.(scss|css)$/, /\.json$/, /\.svg$/],
         loader: require.resolve('url-loader'),
         options: {
           limit: 10000,
