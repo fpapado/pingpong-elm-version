@@ -1,6 +1,7 @@
 import bearing from '@turf/bearing';
 import { Either, unpack } from '@typed/either';
 import xs, { Stream } from 'xstream';
+import throttle from 'xstream/extra/throttle';
 
 import { absoluteOrientation$ } from './deviceorientation';
 import { position$ } from './position';
@@ -20,8 +21,13 @@ const aimToTarget = (position: Position, target: LatLng, absOrientation: number)
 };
 
 export type AimResult = Either<number, 'CUSTOM_AIM_UNAVAILABLE'>;
-export const makeCustomAim$ = (target$: Stream<LatLng>): Stream<AimResult> =>
-  xs
+export const makeCustomAim$ = (
+  target$: Stream<LatLng>,
+  silencePeriod: number = 0
+): Stream<AimResult> => {
+  let throttledOrientation$ = absoluteOrientation$.compose(throttle(silencePeriod));
+
+  return xs
     .combine(position$, target$, absoluteOrientation$)
     .map(([position, target, orientationResult]) =>
       unpack(
@@ -30,3 +36,4 @@ export const makeCustomAim$ = (target$: Stream<LatLng>): Stream<AimResult> =>
         orientationResult
       )
     );
+};

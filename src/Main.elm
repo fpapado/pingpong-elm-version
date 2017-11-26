@@ -1,9 +1,12 @@
 module Main exposing (..)
 
 import Ports
+import Element exposing (..)
+import Element.Events exposing (onClick)
+import Element.Attributes exposing (center, padding, paddingXY, spacing)
+import Stylesheet exposing (stylesheet, Styles(..))
 import View.Compass as Compass
-import Html exposing (Html, text, div, h1, img, button, text)
-import Html.Events exposing (onClick)
+import Html exposing (Html)
 import EveryDict exposing (EveryDict)
 
 
@@ -77,26 +80,34 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    div [] <|
-        [ Compass.view { direction = model.aim } ]
-            ++ (List.map
-                    (\( targetId, position ) -> viewPositionButton targetId)
-                    (EveryDict.toList model.targetPositions)
-               )
+    Element.viewport stylesheet <|
+        column MainContainer
+            [ Element.Attributes.height <| Element.Attributes.percent 100 ]
+            [ el None [ padding 32 ] (el Title [ center ] (text "PingPong"))
+            , row None [ center ] [ html (Compass.view { direction = model.aim }) ]
+            , viewButtonsRow (EveryDict.toList model.targetPositions)
+            ]
 
 
-viewPositionButton : TargetId -> Html Msg
+viewButtonsRow : List ( TargetId, v ) -> Element Styles variation Msg
+viewButtonsRow targetPositions =
+    List.map (\( id, pos ) -> viewPositionButton id) targetPositions
+        |> row None [ center, padding 32, spacing 16 ]
+
+
+viewPositionButton : TargetId -> Element Styles variation Msg
 viewPositionButton targetId =
     let
         targetIdToString (TargetId idString) =
             idString
     in
-        div
+        el
+            None
             []
-            [ button [ onClick (PickTargetPosition targetId) ]
-                [ text <| targetIdToString targetId
-                ]
-            ]
+            (button Button
+                [ paddingXY 32 8, onClick (PickTargetPosition targetId) ]
+                (text <| targetIdToString targetId)
+            )
 
 
 

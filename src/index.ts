@@ -17,11 +17,10 @@ const targetPosition$: MemoryStream<[number, number]> = xs
     },
     stop: function() {}
   } as Producer<[number, number]>)
-  .debug()
   .startWith([41.1496, -8.6109]);
 
 // Listen to the aim stream, and send the values to Elm
-makeCustomAim$(targetPosition$)
+makeCustomAim$(targetPosition$, 12)
   .debug()
   .addListener({
     next: aimResult => sendAimOrError(aimResult),

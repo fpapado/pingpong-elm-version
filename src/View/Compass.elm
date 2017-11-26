@@ -1,6 +1,7 @@
 module View.Compass exposing (view)
 
 import Html exposing (Html, div, span, text, sup)
+import Html.Lazy exposing (lazy)
 import Html.Keyed
 import Html.Attributes exposing (class, style, classList)
 
@@ -22,20 +23,22 @@ view { direction } =
         -- TODO: normalise angle
         -- (dir <= 360 && dir >= 350);
     in
-        div [ class "overflow-hidden" ]
+        [ class <| 1 + "overflow-hidden" ]
             [ div [ class "compass" ]
-                [ Html.Keyed.node "div" [ classList [ ( "compass__windrose animatecolor", True ), ( "compass__windrose--aligned", isAligned ) ], style [ rotationStyle ] ] viewCompassMarks
+                [ lazy (Html.Keyed.node "div" [ classList [ ( "compass__windrose animatecolor", True ), ( "compass__windrose--aligned", isAligned ) ], style [] ]) []
                 , div [ class "compass__arrow-container" ]
-                    [ div [ classList [ ( "compass__arrow animatecolor", True ), ( "compass__arrow--aligned", isAligned ) ] ]
-                        [ div [ class "compass__labels" ]
-                            [ span []
-                                [ viewIf isAligned (text "Hello!") ]
-                            , span []
-                                [ text <| toString <| roundTo 2 direction
-                                , sup
-                                    []
-                                    [ text "o" ]
-                                ]
+                    [ div [ classList [ ( "compass__arrow animatecolor", True ), ( "compass__arrow--aligned", isAligned ) ] ] []
+                    , lazy
+                        (div
+                            [ class "compass__labels" ]
+                        )
+                        [ span []
+                            [ viewIf isAligned (text "Hello!") ]
+                        , span []
+                            [ text <| toString <| roundTo 2 direction
+                            , sup
+                                []
+                                [ text "o" ]
                             ]
                         ]
                     ]
